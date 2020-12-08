@@ -59,16 +59,20 @@ const run = async () => {
       }
     };
 
-    const round = (num) => {
+    const roundToTwoDecimalsPlaces = (num) => {
       return Math.round((num + Number.EPSILON) * 100) / 100;
     };
 
     const data = allData.map((email) => ({
       title: email.campaign_title,
+      emails: email.emails_sent,
       day: weekdayNames[new Date(email.send_time).getDay()],
       time: convertSendTimeToRange(new Date(email.send_time).getHours()),
-      open_rate: round(email.opens.open_rate * 100),
-      click_rate: round(email.clicks.click_rate * 100),
+      day_time: `${
+        weekdayNames[new Date(email.send_time).getDay()]
+      } ${convertSendTimeToRange(new Date(email.send_time).getHours())}`,
+      open_rate: roundToTwoDecimalsPlaces(email.opens.open_rate * 100),
+      click_rate: roundToTwoDecimalsPlaces(email.clicks.click_rate * 100),
       url: `https://${SERVER_PREFIX}.admin.mailchimp.com/reports/summary?id=${email.id}`,
     }));
 
@@ -78,8 +82,10 @@ const run = async () => {
       path: "output.csv",
       header: [
         { id: "title", title: "TITLE" },
+        { id: "emails", title: "EMAILS_SENT" },
         { id: "day", title: "DAY" },
         { id: "time", title: "TIME" },
+        { id: "day_time", title: "DAY_TIME" },
         { id: "open_rate", title: "OPEN_RATE" },
         { id: "click_rate", title: "CLICK_RATE" },
         { id: "url", title: "URL" },
