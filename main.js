@@ -16,8 +16,8 @@ const run = async () => {
   try {
     const response = await mailchimp.reports.getAllCampaignReports({
       // count: 1,
-      count: 1000,
-      // I don't know why but when I specify which fields to return it returns nothing.
+      // count: 1000,
+      // I don't know why, but, when I specify which fields to return, it returns nothing.
       //   fields: [
       //     "id",
       //     "campaign_title",
@@ -63,18 +63,21 @@ const run = async () => {
       return Math.round((num + Number.EPSILON) * 100) / 100;
     };
 
-    const data = allData.map((email) => ({
-      title: email.campaign_title,
-      emails: email.emails_sent,
-      day: weekdayNames[new Date(email.send_time).getDay()],
-      time: convertSendTimeToRange(new Date(email.send_time).getHours()),
-      day_time: `${
-        weekdayNames[new Date(email.send_time).getDay()]
-      } ${convertSendTimeToRange(new Date(email.send_time).getHours())}`,
-      open_rate: roundToTwoDecimalsPlaces(email.opens.open_rate * 100),
-      click_rate: roundToTwoDecimalsPlaces(email.clicks.click_rate * 100),
-      url: `https://${SERVER_PREFIX}.admin.mailchimp.com/reports/summary?id=${email.id}`,
-    }));
+    const data = allData
+      // .filter((email) => email.type == "variate")
+      .map((email) => ({
+        title: email.campaign_title,
+        emails: email.emails_sent,
+        day: weekdayNames[new Date(email.send_time).getDay()],
+        time: convertSendTimeToRange(new Date(email.send_time).getHours()),
+        day_time: `${
+          weekdayNames[new Date(email.send_time).getDay()]
+        } ${convertSendTimeToRange(new Date(email.send_time).getHours())}`,
+        open_rate: roundToTwoDecimalsPlaces(email.opens.open_rate * 100),
+        click_rate: roundToTwoDecimalsPlaces(email.clicks.click_rate * 100),
+        url: `https://${SERVER_PREFIX}.admin.mailchimp.com/reports/summary?id=${email.id}`,
+        // type: email.type,
+      }));
 
     // console.log(data);
 
